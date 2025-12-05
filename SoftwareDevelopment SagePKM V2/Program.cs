@@ -57,33 +57,36 @@ namespace Program
                         break;
 
                     case "2":
-                        //Display all nodes currently in the knowledge graph in table format.
+                        //Display all nodes currently in the knowledge graph in structured format.
                         Console.WriteLine($"\n📚 Knowledge Graph contains {graph.Nodes.Count} node(s):");
 
-                        //Print table header with fixed-width columns and spacing for clarity.
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("--------------------------------------------------------------------------------");
-                        Console.WriteLine($"{"Title",-25} {"Summary",-40} {"Tags",-30}");
-                        Console.WriteLine("--------------------------------------------------------------------------------");
-                        Console.ResetColor();
-
-                        //Loop through each node and print in table format with alternating row colors for readability.
-                        bool alt = false; //Flag to alternate row colors.
+                        //Loop through each node and print in structured format with vertical spacing.
+                        int count = 1;
                         foreach (var n in graph.Nodes)
                         {
-                            Console.ForegroundColor = alt ? ConsoleColor.White : ConsoleColor.Gray;
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            Console.WriteLine($"Node {count}:");
+                            Console.ResetColor();
 
-                            //Format tags to fit within column width, truncate if too long.
-                            string tagDisplay = string.Join(", ", n.Tags);
-                            if (tagDisplay.Length > 30)
-                                tagDisplay = tagDisplay.Substring(0, 27) + "...";
+                            //Print title
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            Console.WriteLine($"Title    : {n.Title}");
+                            Console.ResetColor();
 
-                            //Print formatted row with consistent spacing.
-                            Console.WriteLine($"{n.Title,-25} {n.GetSummary(),-40} {tagDisplay,-30}");
-                            alt = !alt; //Switch color for next row.
+                            //Print summary
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine($"Summary  : {n.GetSummary()}");
+                            Console.ResetColor();
+
+                            //Print tags
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.WriteLine($"Tags     : {string.Join(", ", n.Tags)}");
+                            Console.ResetColor();
+
+                            //Separator line for visual clarity between nodes.
+                            Console.WriteLine("--------------------------------------------------------------------------------");
+                            count++;
                         }
-                        Console.ResetColor();
-                        Console.WriteLine("--------------------------------------------------------------------------------");
                         break;
 
                     case "3":
@@ -92,27 +95,36 @@ namespace Program
                         var keyword = Console.ReadLine();
                         var results = user.SearchNodes(graph, keyword);
 
-                        //Display search results in table format.
+                        //Display search results in structured format.
                         Console.WriteLine($"\n🔎 Found {results.Count} node(s) with tag '{keyword}':");
 
-                        //Print table header with fixed-width columns and spacing for clarity.
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("--------------------------------------------------------------------------------");
-                        Console.WriteLine($"{"Title",-25} {"Summary",-40} {"Tags",-30}");
-                        Console.WriteLine("--------------------------------------------------------------------------------");
-                        Console.ResetColor();
-
+                        //Loop through each result and print in structured format with vertical spacing.
+                        int resultCount = 1;
                         foreach (var result in results)
                         {
-                            //Format tags to fit within column width, truncate if too long.
-                            string tagDisplay = string.Join(", ", result.Tags);
-                            if (tagDisplay.Length > 30)
-                                tagDisplay = tagDisplay.Substring(0, 27) + "...";
+                            Console.ForegroundColor = ConsoleColor.Gray;
+                            Console.WriteLine($"Node {resultCount}:");
+                            Console.ResetColor();
 
-                            //Print formatted row with consistent spacing.
-                            Console.WriteLine($"{result.Title,-25} {result.GetSummary(),-40} {tagDisplay,-30}");
+                            //Print title
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            Console.WriteLine($"Title    : {result.Title}");
+                            Console.ResetColor();
+
+                            //Print summary
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.WriteLine($"Summary  : {result.GetSummary()}");
+                            Console.ResetColor();
+
+                            //Print tags
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.WriteLine($"Tags     : {string.Join(", ", result.Tags)}");
+                            Console.ResetColor();
+
+                            //Separator line for visual clarity between nodes.
+                            Console.WriteLine("--------------------------------------------------------------------------------");
+                            resultCount++;
                         }
-                        Console.WriteLine("--------------------------------------------------------------------------------");
                         break;
 
                     case "4":
