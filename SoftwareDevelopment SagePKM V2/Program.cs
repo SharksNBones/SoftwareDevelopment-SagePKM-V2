@@ -17,12 +17,18 @@ namespace Program
             //Loop to continuously show menu until user exits.
             while (true)
             {
-                //Display menu options for user interaction.
+                //Display menu options for user interaction with colors for better readability.
+                Console.ForegroundColor = ConsoleColor.Cyan; //Set menu header color.
                 Console.WriteLine("\n--- SagePKM Menu ---");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Green; //Set menu options color.
                 Console.WriteLine("1. Add a new node");
                 Console.WriteLine("2. View all nodes");
                 Console.WriteLine("3. Search nodes by tag");
                 Console.WriteLine("4. Exit");
+                Console.ResetColor();
+
                 Console.Write("Choose an option: ");
                 var choice = Console.ReadLine();
 
@@ -44,24 +50,40 @@ namespace Program
                         var node = user.CreateNode(title, content, tags);
                         graph.AddNode(node);
 
+                        //Feedback with emoji for engagement.
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("✅ Node added successfully!");
+                        Console.ResetColor();
                         break;
 
                     case "2":
                         //Display all nodes currently in the knowledge graph in table format.
-                        Console.WriteLine($"\nKnowledge Graph contains {graph.Nodes.Count} node(s):");
+                        Console.WriteLine($"\n📚 Knowledge Graph contains {graph.Nodes.Count} node(s):");
 
-                        //Print table header.
-                        Console.WriteLine("------------------------------------------------------------");
-                        Console.WriteLine($"{"Title",-20} {"Summary",-30} {"Tags",-20}");
-                        Console.WriteLine("------------------------------------------------------------");
+                        //Print table header with fixed-width columns and spacing for clarity.
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("--------------------------------------------------------------------------------");
+                        Console.WriteLine($"{"Title",-25} {"Summary",-40} {"Tags",-30}");
+                        Console.WriteLine("--------------------------------------------------------------------------------");
+                        Console.ResetColor();
 
-                        //Loop through each node and print in table format.
+                        //Loop through each node and print in table format with alternating row colors for readability.
+                        bool alt = false; //Flag to alternate row colors.
                         foreach (var n in graph.Nodes)
                         {
-                            Console.WriteLine($"{n.Title,-20} {n.GetSummary(),-30} {string.Join(", ", n.Tags),-20}");
+                            Console.ForegroundColor = alt ? ConsoleColor.White : ConsoleColor.Gray;
+
+                            //Format tags to fit within column width, truncate if too long.
+                            string tagDisplay = string.Join(", ", n.Tags);
+                            if (tagDisplay.Length > 30)
+                                tagDisplay = tagDisplay.Substring(0, 27) + "...";
+
+                            //Print formatted row with consistent spacing.
+                            Console.WriteLine($"{n.Title,-25} {n.GetSummary(),-40} {tagDisplay,-30}");
+                            alt = !alt; //Switch color for next row.
                         }
-                        Console.WriteLine("------------------------------------------------------------");
+                        Console.ResetColor();
+                        Console.WriteLine("--------------------------------------------------------------------------------");
                         break;
 
                     case "3":
@@ -71,26 +93,40 @@ namespace Program
                         var results = user.SearchNodes(graph, keyword);
 
                         //Display search results in table format.
-                        Console.WriteLine($"\nFound {results.Count} node(s) with tag '{keyword}':");
-                        Console.WriteLine("------------------------------------------------------------");
-                        Console.WriteLine($"{"Title",-20} {"Summary",-30} {"Tags",-20}");
-                        Console.WriteLine("------------------------------------------------------------");
+                        Console.WriteLine($"\n🔎 Found {results.Count} node(s) with tag '{keyword}':");
+
+                        //Print table header with fixed-width columns and spacing for clarity.
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("--------------------------------------------------------------------------------");
+                        Console.WriteLine($"{"Title",-25} {"Summary",-40} {"Tags",-30}");
+                        Console.WriteLine("--------------------------------------------------------------------------------");
+                        Console.ResetColor();
 
                         foreach (var result in results)
                         {
-                            Console.WriteLine($"{result.Title,-20} {result.GetSummary(),-30} {string.Join(", ", result.Tags),-20}");
+                            //Format tags to fit within column width, truncate if too long.
+                            string tagDisplay = string.Join(", ", result.Tags);
+                            if (tagDisplay.Length > 30)
+                                tagDisplay = tagDisplay.Substring(0, 27) + "...";
+
+                            //Print formatted row with consistent spacing.
+                            Console.WriteLine($"{result.Title,-25} {result.GetSummary(),-40} {tagDisplay,-30}");
                         }
-                        Console.WriteLine("------------------------------------------------------------");
+                        Console.WriteLine("--------------------------------------------------------------------------------");
                         break;
 
                     case "4":
                         //Exit the program when user chooses option 4.
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("👋 Exiting SagePKM. Goodbye!");
+                        Console.ResetColor();
                         return;
 
                     default:
                         //Handle invalid menu choice.
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Invalid choice. Try again.");
+                        Console.ResetColor();
                         break;
                 }
             }
@@ -119,9 +155,11 @@ namespace Program
         }
 
         //Method for searching nodes in the knowledge graph that contain a specific keyword in their tags.
+        //Now case-insensitive to improve usability.
         public List<Node> SearchNodes(KnowledgeGraph graph, string keyword)
         {
-            return graph.Nodes.FindAll(n => n.Tags.Contains(keyword));
+            return graph.Nodes.FindAll(n =>
+                n.Tags.Exists(t => t.Equals(keyword, StringComparison.OrdinalIgnoreCase)));
         }
     }
 
